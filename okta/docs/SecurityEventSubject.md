@@ -5,7 +5,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Device** | Pointer to **map[string]interface{}** | The device involved with the event | [optional] 
-**Tenant** | Pointer to **map[string]interface{}** | The tenant involved with the event | [optional] 
 **User** | Pointer to **map[string]interface{}** | The user involved with the event | [optional] 
 
 ## Methods
@@ -51,31 +50,6 @@ SetDevice sets Device field to given value.
 `func (o *SecurityEventSubject) HasDevice() bool`
 
 HasDevice returns a boolean if a field has been set.
-
-### GetTenant
-
-`func (o *SecurityEventSubject) GetTenant() map[string]interface{}`
-
-GetTenant returns the Tenant field if non-nil, zero value otherwise.
-
-### GetTenantOk
-
-`func (o *SecurityEventSubject) GetTenantOk() (*map[string]interface{}, bool)`
-
-GetTenantOk returns a tuple with the Tenant field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetTenant
-
-`func (o *SecurityEventSubject) SetTenant(v map[string]interface{})`
-
-SetTenant sets Tenant field to given value.
-
-### HasTenant
-
-`func (o *SecurityEventSubject) HasTenant() bool`
-
-HasTenant returns a boolean if a field has been set.
 
 ### GetUser
 

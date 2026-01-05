@@ -12,13 +12,13 @@ Name | Type | Description | Notes
 **LastKnownUserAgent** | Pointer to **string** | Last known User Agent of the session | [optional] 
 **ReasonAdmin** | Pointer to [**CaepDeviceComplianceChangeEventReasonAdmin**](CaepDeviceComplianceChangeEventReasonAdmin.md) |  | [optional] 
 **ReasonUser** | Pointer to [**CaepDeviceComplianceChangeEventReasonUser**](CaepDeviceComplianceChangeEventReasonUser.md) |  | [optional] 
-**Subjects** | [**SecurityEventSubject**](SecurityEventSubject.md) |  | 
+**Subject** | [**SecurityEventSubject**](SecurityEventSubject.md) |  | 
 
 ## Methods
 
 ### NewCaepSessionRevokedEvent
 
-`func NewCaepSessionRevokedEvent(eventTimestamp int64, subjects SecurityEventSubject, ) *CaepSessionRevokedEvent`
+`func NewCaepSessionRevokedEvent(eventTimestamp int64, subject SecurityEventSubject, ) *CaepSessionRevokedEvent`
 
 NewCaepSessionRevokedEvent instantiates a new CaepSessionRevokedEvent object
 This constructor will assign default values to properties that have it defined,
@@ -228,24 +228,24 @@ SetReasonUser sets ReasonUser field to given value.
 
 HasReasonUser returns a boolean if a field has been set.
 
-### GetSubjects
+### GetSubject
 
-`func (o *CaepSessionRevokedEvent) GetSubjects() SecurityEventSubject`
+`func (o *CaepSessionRevokedEvent) GetSubject() SecurityEventSubject`
 
-GetSubjects returns the Subjects field if non-nil, zero value otherwise.
+GetSubject returns the Subject field if non-nil, zero value otherwise.
 
-### GetSubjectsOk
+### GetSubjectOk
 
-`func (o *CaepSessionRevokedEvent) GetSubjectsOk() (*SecurityEventSubject, bool)`
+`func (o *CaepSessionRevokedEvent) GetSubjectOk() (*SecurityEventSubject, bool)`
 
-GetSubjectsOk returns a tuple with the Subjects field if it's non-nil, zero value otherwise
+GetSubjectOk returns a tuple with the Subject field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetSubjects
+### SetSubject
 
-`func (o *CaepSessionRevokedEvent) SetSubjects(v SecurityEventSubject)`
+`func (o *CaepSessionRevokedEvent) SetSubject(v SecurityEventSubject)`
 
-SetSubjects sets Subjects field to given value.
+SetSubject sets Subject field to given value.
 
 
 

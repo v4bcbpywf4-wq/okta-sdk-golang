@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -28,19 +27,20 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 	"unicode/utf8"
 
-	"github.com/cenkalti/backoff/v4"
-	"github.com/go-jose/go-jose/v3"
-	"github.com/go-jose/go-jose/v3/jwt"
+	"github.com/cenkalti/backoff/v5"
+	"github.com/go-jose/go-jose/v4"
+	"github.com/go-jose/go-jose/v4/jwt"
 	"golang.org/x/oauth2"
 	{{#withAWSV4Signature}}
 	awsv4 "github.com/aws/aws-sdk-go/aws/signer/v4"
 	awscredentials "github.com/aws/aws-sdk-go/aws/credentials"
 	{{/withAWSV4Signature}}
 	"github.com/google/uuid"
-	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/lestrrat-go/jwx/v3/jwk"
 	goCache "github.com/patrickmn/go-cache"
 )
 
@@ -450,11 +450,13 @@ func convertJWKToPrivateKey(jwks, encryptionType string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	for it := set.Iterate(context.Background()); it.Next(context.Background()); {
-		pair := it.Pair()
-		key := pair.Value.(jwk.Key)
+	for i := 0; i < set.Len(); i++ {
+		key, ok := set.Key(i)
+		if !ok {
+			continue
+		}
 		var rawkey interface{} // This is the raw key, like *rsa.PrivateKey or *ecdsa.PrivateKey
-		err := key.Raw(&rawkey)
+		err := jwk.Export(key, &rawkey)
 		if err != nil {
 			return "", err
 		}
@@ -525,7 +527,7 @@ func createClientAssertion(orgURL, clientID string, privateKeySinger jose.Signer
 		ID:       uuid.New().String(),
 	}
 	jwtBuilder := jwt.Signed(privateKeySinger).Claims(claims)
-	return jwtBuilder.CompactSerialize()
+	return jwtBuilder.Serialize()
 }
 
 func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertion, userAgent string, scopes []string, maxRetries int32, maxBackoff int64, clientID string, signer jose.Signer) (*RequestAccessToken, string, *rsa.PrivateKey, error) {
@@ -545,17 +547,17 @@ func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertio
 	tokenRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	tokenRequest.Header.Add("User-Agent", userAgent)
 	bOff := &oktaBackoff{
-		ctx:             context.TODO(),
+		ctx:             context.Background(),
 		maxRetries:      maxRetries,
 		backoffDuration: time.Duration(maxBackoff),
 	}
 	var tokenResponse *http.Response
-	operation := func() error {
-		tokenResponse, err = httpClient.Do(tokenRequest)
+	operation := func() (*http.Response, error) {
+		resp, err := httpClient.Do(tokenRequest)
 		bOff.retryCount++
-		return err
+		return resp, err
 	}
-	err = backoff.Retry(operation, bOff)
+	tokenResponse, err = backoff.Retry(context.Background(), operation, backoff.WithBackOff(bOff))
 	if err != nil {
 		return nil, "", nil, err
 	}
@@ -608,17 +610,17 @@ func getAccessTokenForDpopPrivateKey(tokenRequest *http.Request, httpClient *htt
 	tokenRequest.Header.Set("DPoP", dpopJWT)
 
 	bOff := &oktaBackoff{
-		ctx:             context.TODO(),
+		ctx:             context.Background(),
 		maxRetries:      maxRetries,
 		backoffDuration: time.Duration(maxBackoff),
 	}
 	var tokenResponse *http.Response
-	operation := func() error {
-		tokenResponse, err = httpClient.Do(tokenRequest)
+	operation := func() (*http.Response, error) {
+		resp, err := httpClient.Do(tokenRequest)
 		bOff.retryCount++
-		return err
+		return resp, err
 	}
-	err = backoff.Retry(operation, bOff)
+	tokenResponse, err = backoff.Retry(context.Background(), operation, backoff.WithBackOff(bOff))
 	if err != nil {
 		return nil, "", nil, err
 	}
@@ -688,10 +690,6 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	return c
 }
 
-func atoi(in string) (int, error) {
-	return strconv.Atoi(in)
-}
-
 // selectHeaderContentType select a content type from the available list.
 func selectHeaderContentType(contentTypes []string) string {
 	if len(contentTypes) == 0 {
@@ -722,20 +720,6 @@ func contains(haystack []string, needle string) bool {
 	return false
 }
 
-// Verify optional parameters are of the correct type.
-func typeCheckParameter(obj interface{}, expected string, name string) error {
-	// Make sure there is an object.
-	if obj == nil {
-		return nil
-	}
-
-	// Check the type is as expected.
-	if reflect.TypeOf(obj).String() != expected {
-		return fmt.Errorf("Expected %s to be of type %s but received %s.", name, expected, reflect.TypeOf(obj).String())
-	}
-	return nil
-}
-
 // parameterToString convert interface{} parameters to string, using a delimiter if format is provided.
 func parameterToString(obj interface{}, collectionFormat string) string {
 	var delimiter string
@@ -758,15 +742,6 @@ func parameterToString(obj interface{}, collectionFormat string) string {
 	}
 
 	return fmt.Sprintf("%v", obj)
-}
-
-// helper for converting interface{} parameters to json strings
-func parameterToJson(obj interface{}) (string, error) {
-	jsonBuf, err := json.Marshal(obj)
-	if err != nil {
-		return "", err
-	}
-	return string(jsonBuf), err
 }
 
 // callAPI do the request.
@@ -1085,7 +1060,7 @@ func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err err
 		return nil
 	}
 	if f, ok := v.(**os.File); ok {
-		*f, err = ioutil.TempFile("", "HttpClientFile")
+		*f, err = os.CreateTemp("", "HttpClientFile")
 		if err != nil {
 			return
 		}
@@ -1175,12 +1150,12 @@ func (c *APIClient) do(ctx context.Context, req *http.Request) (*http.Response, 
 func (c *APIClient) doWithRetries(ctx context.Context, req *http.Request) (*http.Response, error) {
 	var bodyReader func() io.ReadCloser
 	if req.Body != nil {
-		buf, err := ioutil.ReadAll(req.Body)
+		buf, err := io.ReadAll(req.Body)
 		if err != nil {
 			return nil, err
 		}
 		bodyReader = func() io.ReadCloser {
-			return ioutil.NopCloser(bytes.NewReader(buf))
+			return io.NopCloser(bytes.NewReader(buf))
 		}
 	}
 	var (
@@ -1191,28 +1166,62 @@ func (c *APIClient) doWithRetries(ctx context.Context, req *http.Request) (*http
 		ctx:        ctx,
 		maxRetries: c.cfg.Okta.Client.RateLimit.MaxRetries,
 	}
-	operation := func() error {
-		// Always rewind the request body when non-nil.
-		if bodyReader != nil {
-			req.Body = bodyReader()
+	operation := func() (*http.Response, error) {
+		if bOff.retryCount > 0 && (c.cfg.Okta.Client.AuthorizationMode == "PrivateKey" || c.cfg.Okta.Client.AuthorizationMode == "JWT") {
+			// Clear the token cache to force fresh authorization
+			// This will get a new access token and potentially a new nonce
+			c.tokenCache.Delete(AccessTokenCacheKey)
+			c.tokenCache.Delete(DpopAccessTokenNonce)
+			c.tokenCache.Delete(DpopAccessTokenPrivateKey)
+
+			headerParams := make(map[string]string)
+			queryParams := req.URL.Query()
+			req.URL.RawQuery = ""
+			auth, err := c.prepareRequest(ctx, req.URL.String(), req.Method, nil, headerParams, queryParams, url.Values{}, []formFile{})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header = req.Header.Clone() // Start with original headers
+
+			// Update only the authentication headers from the fresh auth request
+			req.Header.Set("Authorization", auth.Header.Get("Authorization"))
+			if dpopHeader := auth.Header.Get("Dpop"); dpopHeader != "" {
+				req.Header.Set("Dpop", dpopHeader)
+			}
+			if userAgentExt := auth.Header.Get("x-okta-user-agent-extended"); userAgentExt != "" {
+				req.Header.Set("x-okta-user-agent-extended", userAgentExt)
+			}
+
+			// Always rewind the request body when non-nil.
+			if bodyReader != nil {
+				req.Body = bodyReader()
+			}
+		} else {
+			// Reuse the existing request headers and body
+			req.Header = req.Header.Clone()
+			// Always rewind the request body when non-nil.
+			if bodyReader != nil {
+				req.Body = bodyReader()
+			}
 		}
-		resp, err = c.callAPI(req)
+		resp, err := c.callAPI(req)
 		if errors.Is(err, io.EOF) {
 			// retry on EOF errors, which might be caused by network connectivity issues
-			return fmt.Errorf("network error: %w", err)
+			return nil, fmt.Errorf("network error: %w", err)
 		} else if err != nil {
 			// this is error is considered to be permanent and should not be retried
-			return backoff.Permanent(err)
+			return nil, backoff.Permanent(err)
 		}
 		if !tooManyRequests(resp) {
-			return nil
+			return resp, nil
 		}
 		if err = tryDrainBody(resp.Body); err != nil {
-			return err
+			return nil, err
 		}
 		backoffDuration, err := Get429BackoffTime(resp)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if c.cfg.Okta.Client.RateLimit.MaxBackoff < backoffDuration {
 			backoffDuration = c.cfg.Okta.Client.RateLimit.MaxBackoff
@@ -1221,9 +1230,9 @@ func (c *APIClient) doWithRetries(ctx context.Context, req *http.Request) (*http
 		bOff.retryCount++
 		req.Header.Add("X-Okta-Retry-For", resp.Header.Get("X-Okta-Request-Id"))
 		req.Header.Add("X-Okta-Retry-Count", fmt.Sprint(bOff.retryCount))
-		return errors.New("too many requests")
+		return nil, errors.New("too many requests")
 	}
-	err = backoff.Retry(operation, bOff)
+	resp, err = backoff.Retry(ctx, operation, backoff.WithBackOff(bOff))
 	return resp, err
 }
 
@@ -1242,18 +1251,6 @@ func addFile(w *multipart.Writer, fieldName, path string) error {
 	_, err = io.Copy(part, file)
 
 	return err
-}
-
-// Prevent trying to import "fmt"
-func reportError(format string, a ...interface{}) error {
-	return fmt.Errorf(format, a...)
-}
-
-// A wrapper for strict JSON decoding
-func newStrictDecoder(data []byte) *json.Decoder {
-	dec := json.NewDecoder(bytes.NewBuffer(data))
-	dec.DisallowUnknownFields()
-	return dec
 }
 
 // Set request body from an interface{}
@@ -1360,10 +1357,6 @@ func CacheExpires(r *http.Response) time.Time {
 	return expires
 }
 
-func strlen(s string) int {
-	return utf8.RuneCountInString(s)
-}
-
 // GenericOpenAPIError Provides access to the body, error and model on returned errors.
 type GenericOpenAPIError struct {
 	body  []byte
@@ -1416,7 +1409,7 @@ func tooManyRequests(resp *http.Response) bool {
 
 func tryDrainBody(body io.ReadCloser) error {
 	defer body.Close()
-	_, err := io.Copy(ioutil.Discard, io.LimitReader(body, 4096))
+	_, err := io.Copy(io.Discard, io.LimitReader(body, 4096))
 	return err
 }
 
@@ -1472,16 +1465,6 @@ func privateKeyToBytes(priv *rsa.PrivateKey) []byte {
 	return privBytes
 }
 
-func publicKeyToBytes(priv *rsa.PrivateKey) []byte {
-	privBytes := pem.EncodeToMemory(
-		&pem.Block{
-			Type:  "RSA PUBLIC KEY",
-			Bytes: x509.MarshalPKCS1PublicKey(&priv.PublicKey),
-		},
-	)
-	return privBytes
-}
-
 type DpopClaims struct {
 	HTTPMethod  string           `json:"htm,omitempty"`
 	HTTPURI     string           `json:"htu,omitempty"`
@@ -1492,19 +1475,19 @@ type DpopClaims struct {
 }
 
 func generateDpopJWT(privateKey *rsa.PrivateKey, httpMethod, URL, nonce, accessToken string) (string, error) {
-	set, err := jwk.New(privateKey.PublicKey)
+	jwkKey, err := jwk.Import(privateKey.PublicKey)
 	if err != nil {
 		return "", err
 	}
-	err = jwk.AssignKeyID(set)
+	err = jwk.AssignKeyID(jwkKey)
 	if err != nil {
 		return "", err
 	}
-	key := jose.SigningKey{Algorithm: jose.RS256, Key: privateKey}
+	signingKey := jose.SigningKey{Algorithm: jose.RS256, Key: privateKey}
 	signerOpts := jose.SignerOptions{}
 	signerOpts.WithType("dpop+jwt")
-	signerOpts.WithHeader("jwk", set)
-	rsaSigner, err := jose.NewSigner(key, &signerOpts)
+	signerOpts.WithHeader("jwk", jwkKey)
+	rsaSigner, err := jose.NewSigner(signingKey, &signerOpts)
 	if err != nil {
 		return "", err
 	}
@@ -1521,7 +1504,7 @@ func generateDpopJWT(privateKey *rsa.PrivateKey, httpMethod, URL, nonce, accessT
 		dpopClaims.AccessToken = base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 	}
 	jwtBuilder := jwt.Signed(rsaSigner).Claims(dpopClaims)
-	return jwtBuilder.CompactSerialize()
+	return jwtBuilder.Serialize()
 }
 
 func StringToAsciiBytes(s string) []byte {

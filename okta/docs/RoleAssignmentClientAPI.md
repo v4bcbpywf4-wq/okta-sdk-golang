@@ -1,0 +1,298 @@
+# \RoleAssignmentClientAPI
+
+All URIs are relative to *https://subdomain.okta.com*
+
+Method | HTTP request | Description
+------------- | ------------- | -------------
+[**AssignRoleToClient**](RoleAssignmentClientAPI.md#AssignRoleToClient) | **Post** /oauth2/v1/clients/{clientId}/roles | Assign a client role
+[**DeleteRoleFromClient**](RoleAssignmentClientAPI.md#DeleteRoleFromClient) | **Delete** /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId} | Unassign a client role
+[**ListRolesForClient**](RoleAssignmentClientAPI.md#ListRolesForClient) | **Get** /oauth2/v1/clients/{clientId}/roles | List all client role assignments
+[**RetrieveClientRole**](RoleAssignmentClientAPI.md#RetrieveClientRole) | **Get** /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId} | Retrieve a client role
+
+
+
+## AssignRoleToClient
+
+> ListRolesForClient200ResponseInner AssignRoleToClient(ctx, clientId).AssignRoleToClientRequest(assignRoleToClientRequest).Execute()
+
+Assign a client role
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/okta/okta-sdk-golang"
+)
+
+func main() {
+	clientId := "52Uy4BUWVBOjFItcg2jWsmnd83Ad8dD" // string | `client_id` of the app
+	assignRoleToClientRequest := openapiclient.assignRoleToClient_request{CustomRoleAssignmentSchema: openapiclient.NewCustomRoleAssignmentSchema("ResourceSet_example", "Role_example", "Type_example")} // AssignRoleToClientRequest | 
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.RoleAssignmentClientAPI.AssignRoleToClient(context.Background(), clientId).AssignRoleToClientRequest(assignRoleToClientRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `RoleAssignmentClientAPI.AssignRoleToClient``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `AssignRoleToClient`: ListRolesForClient200ResponseInner
+	fmt.Fprintf(os.Stdout, "Response from `RoleAssignmentClientAPI.AssignRoleToClient`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**clientId** | **string** | &#x60;client_id&#x60; of the app | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiAssignRoleToClientRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **assignRoleToClientRequest** | [**AssignRoleToClientRequest**](AssignRoleToClientRequest.md) |  | 
+
+### Return type
+
+[**ListRolesForClient200ResponseInner**](ListRolesForClient200ResponseInner.md)
+
+### Authorization
+
+[apiToken](../README.md#apiToken), [oauth2](../README.md#oauth2)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## DeleteRoleFromClient
+
+> DeleteRoleFromClient(ctx, clientId, roleAssignmentId).Execute()
+
+Unassign a client role
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/okta/okta-sdk-golang"
+)
+
+func main() {
+	clientId := "52Uy4BUWVBOjFItcg2jWsmnd83Ad8dD" // string | `client_id` of the app
+	roleAssignmentId := "JBCUYUC7IRCVGS27IFCE2SKO" // string | The `id` of the role assignment
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	r, err := apiClient.RoleAssignmentClientAPI.DeleteRoleFromClient(context.Background(), clientId, roleAssignmentId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `RoleAssignmentClientAPI.DeleteRoleFromClient``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**clientId** | **string** | &#x60;client_id&#x60; of the app | 
+**roleAssignmentId** | **string** | The &#x60;id&#x60; of the role assignment | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiDeleteRoleFromClientRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[apiToken](../README.md#apiToken), [oauth2](../README.md#oauth2)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ListRolesForClient
+
+> []ListRolesForClient200ResponseInner ListRolesForClient(ctx, clientId).Execute()
+
+List all client role assignments
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/okta/okta-sdk-golang"
+)
+
+func main() {
+	clientId := "52Uy4BUWVBOjFItcg2jWsmnd83Ad8dD" // string | `client_id` of the app
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.RoleAssignmentClientAPI.ListRolesForClient(context.Background(), clientId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `RoleAssignmentClientAPI.ListRolesForClient``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListRolesForClient`: []ListRolesForClient200ResponseInner
+	fmt.Fprintf(os.Stdout, "Response from `RoleAssignmentClientAPI.ListRolesForClient`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**clientId** | **string** | &#x60;client_id&#x60; of the app | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListRolesForClientRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**[]ListRolesForClient200ResponseInner**](ListRolesForClient200ResponseInner.md)
+
+### Authorization
+
+[apiToken](../README.md#apiToken), [oauth2](../README.md#oauth2)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## RetrieveClientRole
+
+> ListRolesForClient200ResponseInner RetrieveClientRole(ctx, clientId, roleAssignmentId).Execute()
+
+Retrieve a client role
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/okta/okta-sdk-golang"
+)
+
+func main() {
+	clientId := "52Uy4BUWVBOjFItcg2jWsmnd83Ad8dD" // string | `client_id` of the app
+	roleAssignmentId := "JBCUYUC7IRCVGS27IFCE2SKO" // string | The `id` of the role assignment
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.RoleAssignmentClientAPI.RetrieveClientRole(context.Background(), clientId, roleAssignmentId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `RoleAssignmentClientAPI.RetrieveClientRole``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `RetrieveClientRole`: ListRolesForClient200ResponseInner
+	fmt.Fprintf(os.Stdout, "Response from `RoleAssignmentClientAPI.RetrieveClientRole`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**clientId** | **string** | &#x60;client_id&#x60; of the app | 
+**roleAssignmentId** | **string** | The &#x60;id&#x60; of the role assignment | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiRetrieveClientRoleRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+### Return type
+
+[**ListRolesForClient200ResponseInner**](ListRolesForClient200ResponseInner.md)
+
+### Authorization
+
+[apiToken](../README.md#apiToken), [oauth2](../README.md#oauth2)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+

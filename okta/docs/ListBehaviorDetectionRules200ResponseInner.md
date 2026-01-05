@@ -4,14 +4,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Created** | Pointer to **time.Time** |  | [optional] [readonly] 
-**Id** | Pointer to **string** |  | [optional] [readonly] 
-**LastUpdated** | Pointer to **time.Time** |  | [optional] [readonly] 
-**Name** | **string** |  | 
+**Created** | Pointer to **string** | Timestamp when the Behavior Detection Rule was created | [optional] [readonly] 
+**Id** | Pointer to **string** | ID of the Behavior Detection Rule | [optional] [readonly] 
+**LastUpdated** | Pointer to **string** | Timestamp when the Behavior Detection Rule was last modified | [optional] [readonly] 
+**Name** | **string** | Name of the Behavior Detection Rule | 
 **Status** | Pointer to **string** |  | [optional] 
 **Type** | **string** |  | 
 **Link** | Pointer to [**LinksSelf**](LinksSelf.md) |  | [optional] 
-**Settings** | Pointer to [**BehaviorRuleSettingsVelocity**](BehaviorRuleSettingsVelocity.md) |  | [optional] 
+**Settings** | Pointer to [**BehaviorRuleSettingsAnomalousASN**](BehaviorRuleSettingsAnomalousASN.md) |  | [optional] 
 
 ## Methods
 
@@ -34,20 +34,20 @@ but it doesn't guarantee that properties required by API are set
 
 ### GetCreated
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) GetCreated() time.Time`
+`func (o *ListBehaviorDetectionRules200ResponseInner) GetCreated() string`
 
 GetCreated returns the Created field if non-nil, zero value otherwise.
 
 ### GetCreatedOk
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) GetCreatedOk() (*time.Time, bool)`
+`func (o *ListBehaviorDetectionRules200ResponseInner) GetCreatedOk() (*string, bool)`
 
 GetCreatedOk returns a tuple with the Created field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetCreated
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) SetCreated(v time.Time)`
+`func (o *ListBehaviorDetectionRules200ResponseInner) SetCreated(v string)`
 
 SetCreated sets Created field to given value.
 
@@ -84,20 +84,20 @@ HasId returns a boolean if a field has been set.
 
 ### GetLastUpdated
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) GetLastUpdated() time.Time`
+`func (o *ListBehaviorDetectionRules200ResponseInner) GetLastUpdated() string`
 
 GetLastUpdated returns the LastUpdated field if non-nil, zero value otherwise.
 
 ### GetLastUpdatedOk
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) GetLastUpdatedOk() (*time.Time, bool)`
+`func (o *ListBehaviorDetectionRules200ResponseInner) GetLastUpdatedOk() (*string, bool)`
 
 GetLastUpdatedOk returns a tuple with the LastUpdated field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetLastUpdated
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) SetLastUpdated(v time.Time)`
+`func (o *ListBehaviorDetectionRules200ResponseInner) SetLastUpdated(v string)`
 
 SetLastUpdated sets LastUpdated field to given value.
 
@@ -199,20 +199,20 @@ HasLink returns a boolean if a field has been set.
 
 ### GetSettings
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) GetSettings() BehaviorRuleSettingsVelocity`
+`func (o *ListBehaviorDetectionRules200ResponseInner) GetSettings() BehaviorRuleSettingsAnomalousASN`
 
 GetSettings returns the Settings field if non-nil, zero value otherwise.
 
 ### GetSettingsOk
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) GetSettingsOk() (*BehaviorRuleSettingsVelocity, bool)`
+`func (o *ListBehaviorDetectionRules200ResponseInner) GetSettingsOk() (*BehaviorRuleSettingsAnomalousASN, bool)`
 
 GetSettingsOk returns a tuple with the Settings field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetSettings
 
-`func (o *ListBehaviorDetectionRules200ResponseInner) SetSettings(v BehaviorRuleSettingsVelocity)`
+`func (o *ListBehaviorDetectionRules200ResponseInner) SetSettings(v BehaviorRuleSettingsAnomalousASN)`
 
 SetSettings sets Settings field to given value.
 

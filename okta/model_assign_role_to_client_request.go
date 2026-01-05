@@ -3,7 +3,7 @@ Okta Admin Management
 
 Allows customers to easily access the Okta Management APIs
 
-Copyright 2018 - Present Okta, Inc.
+Copyright 2025 - Present Okta, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-API version: 2024.06.1
+API version: 2025.08.0
 Contact: devex-public@okta.com
 */
 
@@ -28,11 +28,9 @@ import (
 	"fmt"
 )
 
-
-//model_oneof.mustache
 // AssignRoleToClientRequest - struct for AssignRoleToClientRequest
 type AssignRoleToClientRequest struct {
-	CustomRoleAssignmentSchema *CustomRoleAssignmentSchema
+	CustomRoleAssignmentSchema   *CustomRoleAssignmentSchema
 	StandardRoleAssignmentSchema *StandardRoleAssignmentSchema
 }
 
@@ -50,48 +48,173 @@ func StandardRoleAssignmentSchemaAsAssignRoleToClientRequest(v *StandardRoleAssi
 	}
 }
 
-
-// Unmarshal JSON data into one of the pointers in the struct  CUSTOM
+// Unmarshal JSON data into one of the pointers in the struct
 func (dst *AssignRoleToClientRequest) UnmarshalJSON(data []byte) error {
 	var err error
-        match := 0
-        // try to unmarshal data into CustomRoleAssignmentSchema
-        err = json.Unmarshal(data, &dst.CustomRoleAssignmentSchema)
-        if err == nil {
-                jsonCustomRoleAssignmentSchema, _ := json.Marshal(dst.CustomRoleAssignmentSchema)
-                if string(jsonCustomRoleAssignmentSchema) == "{}" { // empty struct
-                        dst.CustomRoleAssignmentSchema = nil
-                } else {
-                        match++
-                }
-        } else {
-                dst.CustomRoleAssignmentSchema = nil
-        }
+	// use discriminator value to speed up the lookup
+	var jsonDict map[string]interface{}
+	err = newStrictDecoder(data).Decode(&jsonDict)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
+	}
 
-        // try to unmarshal data into StandardRoleAssignmentSchema
-        err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
-        if err == nil {
-                jsonStandardRoleAssignmentSchema, _ := json.Marshal(dst.StandardRoleAssignmentSchema)
-                if string(jsonStandardRoleAssignmentSchema) == "{}" { // empty struct
-                        dst.StandardRoleAssignmentSchema = nil
-                } else {
-                        match++
-                }
-        } else {
-                dst.StandardRoleAssignmentSchema = nil
-        }
+	// check if the discriminator value is 'ACCESS_CERTIFICATIONS_ADMIN'
+	if jsonDict["type"] == "ACCESS_CERTIFICATIONS_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
 
-        if match > 1 { // more than 1 match
-                // reset to nil
-                dst.CustomRoleAssignmentSchema = nil
-                dst.StandardRoleAssignmentSchema = nil
+	// check if the discriminator value is 'ACCESS_REQUESTS_ADMIN'
+	if jsonDict["type"] == "ACCESS_REQUESTS_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
 
-                return fmt.Errorf("Data matches more than one schema in oneOf(AssignRoleToClientRequest)")
-        } else if match == 1 {
-                return nil // exactly one match
-        } else { // no match
-                return fmt.Errorf("Data failed to match schemas in oneOf(AssignRoleToClientRequest)")
-        }
+	// check if the discriminator value is 'API_ACCESS_MANAGEMENT_ADMIN'
+	if jsonDict["type"] == "API_ACCESS_MANAGEMENT_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'APP_ADMIN'
+	if jsonDict["type"] == "APP_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'CUSTOM'
+	if jsonDict["type"] == "CUSTOM" {
+		// try to unmarshal JSON data into CustomRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.CustomRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.CustomRoleAssignmentSchema, return on the first match
+		} else {
+			dst.CustomRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as CustomRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'GROUP_MEMBERSHIP_ADMIN'
+	if jsonDict["type"] == "GROUP_MEMBERSHIP_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'HELP_DESK_ADMIN'
+	if jsonDict["type"] == "HELP_DESK_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'ORG_ADMIN'
+	if jsonDict["type"] == "ORG_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'READ_ONLY_ADMIN'
+	if jsonDict["type"] == "READ_ONLY_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'REPORT_ADMIN'
+	if jsonDict["type"] == "REPORT_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'SUPER_ADMIN'
+	if jsonDict["type"] == "SUPER_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'USER_ADMIN'
+	if jsonDict["type"] == "USER_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	// check if the discriminator value is 'WORKFLOWS_ADMIN'
+	if jsonDict["type"] == "WORKFLOWS_ADMIN" {
+		// try to unmarshal JSON data into StandardRoleAssignmentSchema
+		err = json.Unmarshal(data, &dst.StandardRoleAssignmentSchema)
+		if err == nil {
+			return nil // data stored in dst.StandardRoleAssignmentSchema, return on the first match
+		} else {
+			dst.StandardRoleAssignmentSchema = nil
+			return fmt.Errorf("failed to unmarshal AssignRoleToClientRequest as StandardRoleAssignmentSchema: %s", err.Error())
+		}
+	}
+
+	return nil
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
@@ -108,7 +231,7 @@ func (src AssignRoleToClientRequest) MarshalJSON() ([]byte, error) {
 }
 
 // Get the actual instance
-func (obj *AssignRoleToClientRequest) GetActualInstance() (interface{}) {
+func (obj *AssignRoleToClientRequest) GetActualInstance() interface{} {
 	if obj == nil {
 		return nil
 	}
@@ -118,6 +241,20 @@ func (obj *AssignRoleToClientRequest) GetActualInstance() (interface{}) {
 
 	if obj.StandardRoleAssignmentSchema != nil {
 		return obj.StandardRoleAssignmentSchema
+	}
+
+	// all schemas are nil
+	return nil
+}
+
+// Get the actual instance value
+func (obj AssignRoleToClientRequest) GetActualInstanceValue() interface{} {
+	if obj.CustomRoleAssignmentSchema != nil {
+		return *obj.CustomRoleAssignmentSchema
+	}
+
+	if obj.StandardRoleAssignmentSchema != nil {
+		return *obj.StandardRoleAssignmentSchema
 	}
 
 	// all schemas are nil
@@ -159,5 +296,3 @@ func (v *NullableAssignRoleToClientRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

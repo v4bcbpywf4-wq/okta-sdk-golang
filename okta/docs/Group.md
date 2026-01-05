@@ -4,14 +4,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Created** | Pointer to **time.Time** |  | [optional] [readonly] 
-**Id** | Pointer to **string** |  | [optional] [readonly] 
-**LastMembershipUpdated** | Pointer to **time.Time** |  | [optional] [readonly] 
-**LastUpdated** | Pointer to **time.Time** |  | [optional] [readonly] 
-**ObjectClass** | Pointer to **[]string** |  | [optional] [readonly] 
+**Created** | Pointer to **time.Time** | Timestamp when the group was created | [optional] [readonly] 
+**Id** | Pointer to **string** | Unique ID for the group | [optional] [readonly] 
+**LastMembershipUpdated** | Pointer to **time.Time** | Timestamp when the groups memberships were last updated | [optional] [readonly] 
+**LastUpdated** | Pointer to **time.Time** | Timestamp when the group&#39;s profile was last updated | [optional] [readonly] 
+**ObjectClass** | Pointer to **[]string** | Determines the group&#39;s &#x60;profile&#x60; | [optional] [readonly] 
 **Profile** | Pointer to [**GroupProfile**](GroupProfile.md) |  | [optional] 
-**Type** | Pointer to **string** |  | [optional] 
-**Embedded** | Pointer to **map[string]map[string]interface{}** |  | [optional] [readonly] 
+**Type** | Pointer to **string** | Determines how a group&#39;s profile and memberships are managed | [optional] 
+**Embedded** | Pointer to [**GroupEmbedded**](GroupEmbedded.md) |  | [optional] 
 **Links** | Pointer to [**GroupLinks**](GroupLinks.md) |  | [optional] 
 
 ## Methods
@@ -210,20 +210,20 @@ HasType returns a boolean if a field has been set.
 
 ### GetEmbedded
 
-`func (o *Group) GetEmbedded() map[string]map[string]interface{}`
+`func (o *Group) GetEmbedded() GroupEmbedded`
 
 GetEmbedded returns the Embedded field if non-nil, zero value otherwise.
 
 ### GetEmbeddedOk
 
-`func (o *Group) GetEmbeddedOk() (*map[string]map[string]interface{}, bool)`
+`func (o *Group) GetEmbeddedOk() (*GroupEmbedded, bool)`
 
 GetEmbeddedOk returns a tuple with the Embedded field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetEmbedded
 
-`func (o *Group) SetEmbedded(v map[string]map[string]interface{})`
+`func (o *Group) SetEmbedded(v GroupEmbedded)`
 
 SetEmbedded sets Embedded field to given value.
 

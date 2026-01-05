@@ -3,7 +3,7 @@ Okta Admin Management
 
 Allows customers to easily access the Okta Management APIs
 
-Copyright 2018 - Present Okta, Inc.
+Copyright 2025 - Present Okta, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-API version: 2024.06.1
+API version: 2025.08.0
 Contact: devex-public@okta.com
 */
 
@@ -27,12 +27,16 @@ import (
 	"encoding/json"
 )
 
+// checks if the UpdateUserRequest type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &UpdateUserRequest{}
+
 // UpdateUserRequest struct for UpdateUserRequest
 type UpdateUserRequest struct {
 	Credentials *UserCredentials `json:"credentials,omitempty"`
-	Profile *UserProfile `json:"profile,omitempty"`
-	// <div class=\"x-lifecycle-container\"><x-lifecycle class=\"ea\"></x-lifecycle></div>The ID of the Realm in which the user is residing
-	RealmId *string `json:"realmId,omitempty"`
+	Profile     *UserProfile     `json:"profile,omitempty"`
+	// The ID of the realm in which the user is residing. See [Realms](/openapi/okta-management/management/tag/Realm/).
+	RealmId              *string                `json:"realmId,omitempty"`
+	Type                 *UpdateUserRequestType `json:"type,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -57,7 +61,7 @@ func NewUpdateUserRequestWithDefaults() *UpdateUserRequest {
 
 // GetCredentials returns the Credentials field value if set, zero value otherwise.
 func (o *UpdateUserRequest) GetCredentials() UserCredentials {
-	if o == nil || o.Credentials == nil {
+	if o == nil || IsNil(o.Credentials) {
 		var ret UserCredentials
 		return ret
 	}
@@ -67,7 +71,7 @@ func (o *UpdateUserRequest) GetCredentials() UserCredentials {
 // GetCredentialsOk returns a tuple with the Credentials field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *UpdateUserRequest) GetCredentialsOk() (*UserCredentials, bool) {
-	if o == nil || o.Credentials == nil {
+	if o == nil || IsNil(o.Credentials) {
 		return nil, false
 	}
 	return o.Credentials, true
@@ -75,7 +79,7 @@ func (o *UpdateUserRequest) GetCredentialsOk() (*UserCredentials, bool) {
 
 // HasCredentials returns a boolean if a field has been set.
 func (o *UpdateUserRequest) HasCredentials() bool {
-	if o != nil && o.Credentials != nil {
+	if o != nil && !IsNil(o.Credentials) {
 		return true
 	}
 
@@ -89,7 +93,7 @@ func (o *UpdateUserRequest) SetCredentials(v UserCredentials) {
 
 // GetProfile returns the Profile field value if set, zero value otherwise.
 func (o *UpdateUserRequest) GetProfile() UserProfile {
-	if o == nil || o.Profile == nil {
+	if o == nil || IsNil(o.Profile) {
 		var ret UserProfile
 		return ret
 	}
@@ -99,7 +103,7 @@ func (o *UpdateUserRequest) GetProfile() UserProfile {
 // GetProfileOk returns a tuple with the Profile field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *UpdateUserRequest) GetProfileOk() (*UserProfile, bool) {
-	if o == nil || o.Profile == nil {
+	if o == nil || IsNil(o.Profile) {
 		return nil, false
 	}
 	return o.Profile, true
@@ -107,7 +111,7 @@ func (o *UpdateUserRequest) GetProfileOk() (*UserProfile, bool) {
 
 // HasProfile returns a boolean if a field has been set.
 func (o *UpdateUserRequest) HasProfile() bool {
-	if o != nil && o.Profile != nil {
+	if o != nil && !IsNil(o.Profile) {
 		return true
 	}
 
@@ -121,7 +125,7 @@ func (o *UpdateUserRequest) SetProfile(v UserProfile) {
 
 // GetRealmId returns the RealmId field value if set, zero value otherwise.
 func (o *UpdateUserRequest) GetRealmId() string {
-	if o == nil || o.RealmId == nil {
+	if o == nil || IsNil(o.RealmId) {
 		var ret string
 		return ret
 	}
@@ -131,7 +135,7 @@ func (o *UpdateUserRequest) GetRealmId() string {
 // GetRealmIdOk returns a tuple with the RealmId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *UpdateUserRequest) GetRealmIdOk() (*string, bool) {
-	if o == nil || o.RealmId == nil {
+	if o == nil || IsNil(o.RealmId) {
 		return nil, false
 	}
 	return o.RealmId, true
@@ -139,7 +143,7 @@ func (o *UpdateUserRequest) GetRealmIdOk() (*string, bool) {
 
 // HasRealmId returns a boolean if a field has been set.
 func (o *UpdateUserRequest) HasRealmId() bool {
-	if o != nil && o.RealmId != nil {
+	if o != nil && !IsNil(o.RealmId) {
 		return true
 	}
 
@@ -151,45 +155,87 @@ func (o *UpdateUserRequest) SetRealmId(v string) {
 	o.RealmId = &v
 }
 
+// GetType returns the Type field value if set, zero value otherwise.
+func (o *UpdateUserRequest) GetType() UpdateUserRequestType {
+	if o == nil || IsNil(o.Type) {
+		var ret UpdateUserRequestType
+		return ret
+	}
+	return *o.Type
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UpdateUserRequest) GetTypeOk() (*UpdateUserRequestType, bool) {
+	if o == nil || IsNil(o.Type) {
+		return nil, false
+	}
+	return o.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *UpdateUserRequest) HasType() bool {
+	if o != nil && !IsNil(o.Type) {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given UpdateUserRequestType and assigns it to the Type field.
+func (o *UpdateUserRequest) SetType(v UpdateUserRequestType) {
+	o.Type = &v
+}
+
 func (o UpdateUserRequest) MarshalJSON() ([]byte, error) {
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
+	}
+	return json.Marshal(toSerialize)
+}
+
+func (o UpdateUserRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Credentials != nil {
+	if !IsNil(o.Credentials) {
 		toSerialize["credentials"] = o.Credentials
 	}
-	if o.Profile != nil {
+	if !IsNil(o.Profile) {
 		toSerialize["profile"] = o.Profile
 	}
-	if o.RealmId != nil {
+	if !IsNil(o.RealmId) {
 		toSerialize["realmId"] = o.RealmId
+	}
+	if !IsNil(o.Type) {
+		toSerialize["type"] = o.Type
 	}
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
 	}
 
-	return json.Marshal(toSerialize)
+	return toSerialize, nil
 }
 
-func (o *UpdateUserRequest) UnmarshalJSON(bytes []byte) (err error) {
+func (o *UpdateUserRequest) UnmarshalJSON(data []byte) (err error) {
 	varUpdateUserRequest := _UpdateUserRequest{}
 
-	err = json.Unmarshal(bytes, &varUpdateUserRequest)
-	if err == nil {
-		*o = UpdateUserRequest(varUpdateUserRequest)
-	} else {
+	err = json.Unmarshal(data, &varUpdateUserRequest)
+
+	if err != nil {
 		return err
 	}
 
+	*o = UpdateUserRequest(varUpdateUserRequest)
+
 	additionalProperties := make(map[string]interface{})
 
-	err = json.Unmarshal(bytes, &additionalProperties)
-	if err == nil {
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "credentials")
 		delete(additionalProperties, "profile")
 		delete(additionalProperties, "realmId")
+		delete(additionalProperties, "type")
 		o.AdditionalProperties = additionalProperties
-	} else {
-		return err
 	}
 
 	return err
@@ -230,4 +276,3 @@ func (v *NullableUpdateUserRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-

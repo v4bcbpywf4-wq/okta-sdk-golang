@@ -3,7 +3,7 @@ Okta Admin Management
 
 Allows customers to easily access the Okta Management APIs
 
-Copyright 2018 - Present Okta, Inc.
+Copyright 2025 - Present Okta, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-API version: 2024.06.1
+API version: 2025.08.0
 Contact: devex-public@okta.com
 */
 
@@ -27,13 +27,20 @@ import (
 	"encoding/json"
 )
 
-// BundleEntitlement struct for BundleEntitlement
+// checks if the BundleEntitlement type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &BundleEntitlement{}
+
+// BundleEntitlement An entitlement in a governance bundle
 type BundleEntitlement struct {
+	// The description of the role
 	Description *string `json:"description,omitempty"`
+	// Entitlement ID
 	Id *string `json:"id,omitempty"`
+	// The name of the role
 	Name *string `json:"name,omitempty"`
-	Role *string `json:"role,omitempty"`
-	Links *BundleEntitlementLinks `json:"_links,omitempty"`
+	// The role key
+	Role                 *string                 `json:"role,omitempty"`
+	Links                *BundleEntitlementLinks `json:"_links,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -58,7 +65,7 @@ func NewBundleEntitlementWithDefaults() *BundleEntitlement {
 
 // GetDescription returns the Description field value if set, zero value otherwise.
 func (o *BundleEntitlement) GetDescription() string {
-	if o == nil || o.Description == nil {
+	if o == nil || IsNil(o.Description) {
 		var ret string
 		return ret
 	}
@@ -68,7 +75,7 @@ func (o *BundleEntitlement) GetDescription() string {
 // GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BundleEntitlement) GetDescriptionOk() (*string, bool) {
-	if o == nil || o.Description == nil {
+	if o == nil || IsNil(o.Description) {
 		return nil, false
 	}
 	return o.Description, true
@@ -76,7 +83,7 @@ func (o *BundleEntitlement) GetDescriptionOk() (*string, bool) {
 
 // HasDescription returns a boolean if a field has been set.
 func (o *BundleEntitlement) HasDescription() bool {
-	if o != nil && o.Description != nil {
+	if o != nil && !IsNil(o.Description) {
 		return true
 	}
 
@@ -90,7 +97,7 @@ func (o *BundleEntitlement) SetDescription(v string) {
 
 // GetId returns the Id field value if set, zero value otherwise.
 func (o *BundleEntitlement) GetId() string {
-	if o == nil || o.Id == nil {
+	if o == nil || IsNil(o.Id) {
 		var ret string
 		return ret
 	}
@@ -100,7 +107,7 @@ func (o *BundleEntitlement) GetId() string {
 // GetIdOk returns a tuple with the Id field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BundleEntitlement) GetIdOk() (*string, bool) {
-	if o == nil || o.Id == nil {
+	if o == nil || IsNil(o.Id) {
 		return nil, false
 	}
 	return o.Id, true
@@ -108,7 +115,7 @@ func (o *BundleEntitlement) GetIdOk() (*string, bool) {
 
 // HasId returns a boolean if a field has been set.
 func (o *BundleEntitlement) HasId() bool {
-	if o != nil && o.Id != nil {
+	if o != nil && !IsNil(o.Id) {
 		return true
 	}
 
@@ -122,7 +129,7 @@ func (o *BundleEntitlement) SetId(v string) {
 
 // GetName returns the Name field value if set, zero value otherwise.
 func (o *BundleEntitlement) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
@@ -132,7 +139,7 @@ func (o *BundleEntitlement) GetName() string {
 // GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BundleEntitlement) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
 	return o.Name, true
@@ -140,7 +147,7 @@ func (o *BundleEntitlement) GetNameOk() (*string, bool) {
 
 // HasName returns a boolean if a field has been set.
 func (o *BundleEntitlement) HasName() bool {
-	if o != nil && o.Name != nil {
+	if o != nil && !IsNil(o.Name) {
 		return true
 	}
 
@@ -154,7 +161,7 @@ func (o *BundleEntitlement) SetName(v string) {
 
 // GetRole returns the Role field value if set, zero value otherwise.
 func (o *BundleEntitlement) GetRole() string {
-	if o == nil || o.Role == nil {
+	if o == nil || IsNil(o.Role) {
 		var ret string
 		return ret
 	}
@@ -164,7 +171,7 @@ func (o *BundleEntitlement) GetRole() string {
 // GetRoleOk returns a tuple with the Role field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BundleEntitlement) GetRoleOk() (*string, bool) {
-	if o == nil || o.Role == nil {
+	if o == nil || IsNil(o.Role) {
 		return nil, false
 	}
 	return o.Role, true
@@ -172,7 +179,7 @@ func (o *BundleEntitlement) GetRoleOk() (*string, bool) {
 
 // HasRole returns a boolean if a field has been set.
 func (o *BundleEntitlement) HasRole() bool {
-	if o != nil && o.Role != nil {
+	if o != nil && !IsNil(o.Role) {
 		return true
 	}
 
@@ -186,7 +193,7 @@ func (o *BundleEntitlement) SetRole(v string) {
 
 // GetLinks returns the Links field value if set, zero value otherwise.
 func (o *BundleEntitlement) GetLinks() BundleEntitlementLinks {
-	if o == nil || o.Links == nil {
+	if o == nil || IsNil(o.Links) {
 		var ret BundleEntitlementLinks
 		return ret
 	}
@@ -196,7 +203,7 @@ func (o *BundleEntitlement) GetLinks() BundleEntitlementLinks {
 // GetLinksOk returns a tuple with the Links field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BundleEntitlement) GetLinksOk() (*BundleEntitlementLinks, bool) {
-	if o == nil || o.Links == nil {
+	if o == nil || IsNil(o.Links) {
 		return nil, false
 	}
 	return o.Links, true
@@ -204,7 +211,7 @@ func (o *BundleEntitlement) GetLinksOk() (*BundleEntitlementLinks, bool) {
 
 // HasLinks returns a boolean if a field has been set.
 func (o *BundleEntitlement) HasLinks() bool {
-	if o != nil && o.Links != nil {
+	if o != nil && !IsNil(o.Links) {
 		return true
 	}
 
@@ -217,20 +224,28 @@ func (o *BundleEntitlement) SetLinks(v BundleEntitlementLinks) {
 }
 
 func (o BundleEntitlement) MarshalJSON() ([]byte, error) {
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
+	}
+	return json.Marshal(toSerialize)
+}
+
+func (o BundleEntitlement) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Description != nil {
+	if !IsNil(o.Description) {
 		toSerialize["description"] = o.Description
 	}
-	if o.Id != nil {
+	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id
 	}
-	if o.Name != nil {
+	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
-	if o.Role != nil {
+	if !IsNil(o.Role) {
 		toSerialize["role"] = o.Role
 	}
-	if o.Links != nil {
+	if !IsNil(o.Links) {
 		toSerialize["_links"] = o.Links
 	}
 
@@ -238,31 +253,29 @@ func (o BundleEntitlement) MarshalJSON() ([]byte, error) {
 		toSerialize[key] = value
 	}
 
-	return json.Marshal(toSerialize)
+	return toSerialize, nil
 }
 
-func (o *BundleEntitlement) UnmarshalJSON(bytes []byte) (err error) {
+func (o *BundleEntitlement) UnmarshalJSON(data []byte) (err error) {
 	varBundleEntitlement := _BundleEntitlement{}
 
-	err = json.Unmarshal(bytes, &varBundleEntitlement)
-	if err == nil {
-		*o = BundleEntitlement(varBundleEntitlement)
-	} else {
+	err = json.Unmarshal(data, &varBundleEntitlement)
+
+	if err != nil {
 		return err
 	}
 
+	*o = BundleEntitlement(varBundleEntitlement)
+
 	additionalProperties := make(map[string]interface{})
 
-	err = json.Unmarshal(bytes, &additionalProperties)
-	if err == nil {
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "description")
 		delete(additionalProperties, "id")
 		delete(additionalProperties, "name")
 		delete(additionalProperties, "role")
 		delete(additionalProperties, "_links")
 		o.AdditionalProperties = additionalProperties
-	} else {
-		return err
 	}
 
 	return err
@@ -303,4 +316,3 @@ func (v *NullableBundleEntitlement) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-

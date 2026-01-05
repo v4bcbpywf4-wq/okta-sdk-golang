@@ -3,7 +3,7 @@ Okta Admin Management
 
 Allows customers to easily access the Okta Management APIs
 
-Copyright 2018 - Present Okta, Inc.
+Copyright 2025 - Present Okta, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-API version: 2024.06.1
+API version: 2025.08.0
 Contact: devex-public@okta.com
 */
 
@@ -28,14 +28,20 @@ import (
 	"fmt"
 )
 
-
-//model_oneof.mustache
 // ListBehaviorDetectionRules200ResponseInner - struct for ListBehaviorDetectionRules200ResponseInner
 type ListBehaviorDetectionRules200ResponseInner struct {
-	BehaviorRuleAnomalousDevice *BehaviorRuleAnomalousDevice
-	BehaviorRuleAnomalousIP *BehaviorRuleAnomalousIP
+	BehaviorRuleASN               *BehaviorRuleASN
+	BehaviorRuleAnomalousDevice   *BehaviorRuleAnomalousDevice
+	BehaviorRuleAnomalousIP       *BehaviorRuleAnomalousIP
 	BehaviorRuleAnomalousLocation *BehaviorRuleAnomalousLocation
-	BehaviorRuleVelocity *BehaviorRuleVelocity
+	BehaviorRuleVelocity          *BehaviorRuleVelocity
+}
+
+// BehaviorRuleASNAsListBehaviorDetectionRules200ResponseInner is a convenience function that returns BehaviorRuleASN wrapped in ListBehaviorDetectionRules200ResponseInner
+func BehaviorRuleASNAsListBehaviorDetectionRules200ResponseInner(v *BehaviorRuleASN) ListBehaviorDetectionRules200ResponseInner {
+	return ListBehaviorDetectionRules200ResponseInner{
+		BehaviorRuleASN: v,
+	}
 }
 
 // BehaviorRuleAnomalousDeviceAsListBehaviorDetectionRules200ResponseInner is a convenience function that returns BehaviorRuleAnomalousDevice wrapped in ListBehaviorDetectionRules200ResponseInner
@@ -66,15 +72,26 @@ func BehaviorRuleVelocityAsListBehaviorDetectionRules200ResponseInner(v *Behavio
 	}
 }
 
-
-// Unmarshal JSON data into one of the pointers in the struct  CUSTOM
+// Unmarshal JSON data into one of the pointers in the struct
 func (dst *ListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(data []byte) error {
 	var err error
 	// use discriminator value to speed up the lookup
 	var jsonDict map[string]interface{}
 	err = newStrictDecoder(data).Decode(&jsonDict)
 	if err != nil {
-		return fmt.Errorf("Failed to unmarshal JSON into map for the discriminator lookup.")
+		return fmt.Errorf("failed to unmarshal JSON into map for the discriminator lookup")
+	}
+
+	// check if the discriminator value is 'ANOMALOUS_ASN'
+	if jsonDict["type"] == "ANOMALOUS_ASN" {
+		// try to unmarshal JSON data into BehaviorRuleASN
+		err = json.Unmarshal(data, &dst.BehaviorRuleASN)
+		if err == nil {
+			return nil // data stored in dst.BehaviorRuleASN, return on the first match
+		} else {
+			dst.BehaviorRuleASN = nil
+			return fmt.Errorf("failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleASN: %s", err.Error())
+		}
 	}
 
 	// check if the discriminator value is 'ANOMALOUS_DEVICE'
@@ -85,7 +102,7 @@ func (dst *ListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(data []byte
 			return nil // data stored in dst.BehaviorRuleAnomalousDevice, return on the first match
 		} else {
 			dst.BehaviorRuleAnomalousDevice = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousDevice: %s", err.Error())
+			return fmt.Errorf("failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousDevice: %s", err.Error())
 		}
 	}
 
@@ -97,7 +114,7 @@ func (dst *ListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(data []byte
 			return nil // data stored in dst.BehaviorRuleAnomalousIP, return on the first match
 		} else {
 			dst.BehaviorRuleAnomalousIP = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousIP: %s", err.Error())
+			return fmt.Errorf("failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousIP: %s", err.Error())
 		}
 	}
 
@@ -109,55 +126,7 @@ func (dst *ListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(data []byte
 			return nil // data stored in dst.BehaviorRuleAnomalousLocation, return on the first match
 		} else {
 			dst.BehaviorRuleAnomalousLocation = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousLocation: %s", err.Error())
-		}
-	}
-
-	// check if the discriminator value is 'BehaviorRuleAnomalousDevice'
-	if jsonDict["type"] == "BehaviorRuleAnomalousDevice" {
-		// try to unmarshal JSON data into BehaviorRuleAnomalousDevice
-		err = json.Unmarshal(data, &dst.BehaviorRuleAnomalousDevice)
-		if err == nil {
-			return nil // data stored in dst.BehaviorRuleAnomalousDevice, return on the first match
-		} else {
-			dst.BehaviorRuleAnomalousDevice = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousDevice: %s", err.Error())
-		}
-	}
-
-	// check if the discriminator value is 'BehaviorRuleAnomalousIP'
-	if jsonDict["type"] == "BehaviorRuleAnomalousIP" {
-		// try to unmarshal JSON data into BehaviorRuleAnomalousIP
-		err = json.Unmarshal(data, &dst.BehaviorRuleAnomalousIP)
-		if err == nil {
-			return nil // data stored in dst.BehaviorRuleAnomalousIP, return on the first match
-		} else {
-			dst.BehaviorRuleAnomalousIP = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousIP: %s", err.Error())
-		}
-	}
-
-	// check if the discriminator value is 'BehaviorRuleAnomalousLocation'
-	if jsonDict["type"] == "BehaviorRuleAnomalousLocation" {
-		// try to unmarshal JSON data into BehaviorRuleAnomalousLocation
-		err = json.Unmarshal(data, &dst.BehaviorRuleAnomalousLocation)
-		if err == nil {
-			return nil // data stored in dst.BehaviorRuleAnomalousLocation, return on the first match
-		} else {
-			dst.BehaviorRuleAnomalousLocation = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousLocation: %s", err.Error())
-		}
-	}
-
-	// check if the discriminator value is 'BehaviorRuleVelocity'
-	if jsonDict["type"] == "BehaviorRuleVelocity" {
-		// try to unmarshal JSON data into BehaviorRuleVelocity
-		err = json.Unmarshal(data, &dst.BehaviorRuleVelocity)
-		if err == nil {
-			return nil // data stored in dst.BehaviorRuleVelocity, return on the first match
-		} else {
-			dst.BehaviorRuleVelocity = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleVelocity: %s", err.Error())
+			return fmt.Errorf("failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleAnomalousLocation: %s", err.Error())
 		}
 	}
 
@@ -169,7 +138,7 @@ func (dst *ListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(data []byte
 			return nil // data stored in dst.BehaviorRuleVelocity, return on the first match
 		} else {
 			dst.BehaviorRuleVelocity = nil
-			return fmt.Errorf("Failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleVelocity: %s", err.Error())
+			return fmt.Errorf("failed to unmarshal ListBehaviorDetectionRules200ResponseInner as BehaviorRuleVelocity: %s", err.Error())
 		}
 	}
 
@@ -178,6 +147,10 @@ func (dst *ListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(data []byte
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src ListBehaviorDetectionRules200ResponseInner) MarshalJSON() ([]byte, error) {
+	if src.BehaviorRuleASN != nil {
+		return json.Marshal(&src.BehaviorRuleASN)
+	}
+
 	if src.BehaviorRuleAnomalousDevice != nil {
 		return json.Marshal(&src.BehaviorRuleAnomalousDevice)
 	}
@@ -198,10 +171,14 @@ func (src ListBehaviorDetectionRules200ResponseInner) MarshalJSON() ([]byte, err
 }
 
 // Get the actual instance
-func (obj *ListBehaviorDetectionRules200ResponseInner) GetActualInstance() (interface{}) {
+func (obj *ListBehaviorDetectionRules200ResponseInner) GetActualInstance() interface{} {
 	if obj == nil {
 		return nil
 	}
+	if obj.BehaviorRuleASN != nil {
+		return obj.BehaviorRuleASN
+	}
+
 	if obj.BehaviorRuleAnomalousDevice != nil {
 		return obj.BehaviorRuleAnomalousDevice
 	}
@@ -216,6 +193,32 @@ func (obj *ListBehaviorDetectionRules200ResponseInner) GetActualInstance() (inte
 
 	if obj.BehaviorRuleVelocity != nil {
 		return obj.BehaviorRuleVelocity
+	}
+
+	// all schemas are nil
+	return nil
+}
+
+// Get the actual instance value
+func (obj ListBehaviorDetectionRules200ResponseInner) GetActualInstanceValue() interface{} {
+	if obj.BehaviorRuleASN != nil {
+		return *obj.BehaviorRuleASN
+	}
+
+	if obj.BehaviorRuleAnomalousDevice != nil {
+		return *obj.BehaviorRuleAnomalousDevice
+	}
+
+	if obj.BehaviorRuleAnomalousIP != nil {
+		return *obj.BehaviorRuleAnomalousIP
+	}
+
+	if obj.BehaviorRuleAnomalousLocation != nil {
+		return *obj.BehaviorRuleAnomalousLocation
+	}
+
+	if obj.BehaviorRuleVelocity != nil {
+		return *obj.BehaviorRuleVelocity
 	}
 
 	// all schemas are nil
@@ -257,5 +260,3 @@ func (v *NullableListBehaviorDetectionRules200ResponseInner) UnmarshalJSON(src [
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-
